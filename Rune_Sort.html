@@ -4,10 +4,10 @@
         <link rel="stylesheet" href="Rune_Sort.css"/>
     </head>
     <body>
-        <img class="moveable" src="Air.jpeg"/>
-        <img class="moveable" src="Earth.jpeg" />
-        <img class="moveable" src="Fire.jpeg" />
-        <img class="moveable" src="Water.jpeg" />
+        <img class="moveable" src="Air.jpeg" style="left: 400px; top:50px;"/>
+        <img class="moveable" src="Earth.jpeg" style="left: 800px; top:50px;" />
+        <img class="moveable" src="Fire.jpeg" style="left: 400px; top:300px;" />
+        <img class="moveable" src="Water.jpeg" style="left: 800px; top: 300px" />
 
         <div id="grid">
             <div></div>
@@ -17,11 +17,11 @@
         </div>
 
         <script>
+            let timeout = null;
             const targets = [...document.getElementById("grid").children].map(elem => {
                 const rect = elem.getBoundingClientRect();
                 return {x: (rect.left + rect.right)/2, y: (rect.top + rect.bottom)/2};
             })
-
 
             Array.from(
                 document.getElementsByClassName("moveable"))
@@ -67,7 +67,24 @@
                             elem.style.left = (target.x - 75) + "px";
                         }
                     })
+
+                    if (timeout !== null) clearTimeout(timeout);
+                    timeout = setTimeout(endCheck, 200);
                 }
+            }
+
+            function endCheck(){
+                const images = [...document.getElementsByTagName("img")];
+                const tops = images.map(img => img.style.top);
+                if (!tops.every(H => H === tops[0])) return;
+
+                const lefts = images.map(img => img.style.left);
+                if ((lefts[1] < lefts[2] && lefts[2] < lefts[0] && lefts[0] < lefts[3])
+                    || (lefts[2] < lefts[0] && lefts[0] < lefts[3] && lefts[3] < lefts[1])
+                    || (lefts[0] < lefts[3] && lefts[3] < lefts[1] && lefts[1] < lefts[2])
+                    || (lefts[3] < lefts[1] && lefts[1] < lefts[2] && lefts[2] < lefts[0])
+                )
+                    alert("COMPLETION CODE: 9287")
             }
         </script>
     </body>
