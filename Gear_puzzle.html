@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="Gear_puzzle.css"/>
+    </head>
+    <body>
+        <img src="Blue1.png" id="first" draggable="false" class="fixed spin" style="left: 484px; top: 767px"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 353px; top: 536px"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 561px; top: 290px"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 0px; top: 0px; width: 190px;"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 210px; top: 180px; width: 145px;"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 205px; top: 709px; width: 145px;"/>
+        <img src="Blue2.png" draggable="false" class="fixed" style="left: 235px; top: 390px; width: 105px;"/>
+        <img src="Big_Red.png" id="Big_Red" class="moveable" draggable="true"/>
+        <img src="Medium_Red.png" id="Medium_Red" class="moveable" draggable="true"/>
+        <img src="Small_Red.png" id="Small_Red_1" class="moveable" draggable="true"/>
+        <img src="Small_Red.png" id="Small_Red_2" class="moveable" draggable="true"/>
+        <img src="Small_Red.png" id="Small_Red_3" class="moveable" draggable="true"/>
+
+        <script>
+            Array.from(
+                document.getElementsByClassName("moveable"))
+                    .forEach(dragElement)
+
+            function dragElement(elem) {
+                let pos1 = 0;
+                let pos2 = 0;
+                let pos3 = 0;
+                let pos4 = 0;
+
+                elem.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    elem.style.top = (elem.offsetTop - pos2) + "px";
+                    elem.style.left = (elem.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement() {
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+
+                    let spinning = [...document.getElementsByClassName("spin")];
+
+                    let oldLength = 0;
+                    let newLength = spinning.length;
+
+                    while (newLength !== oldLength) {
+                        if (newLength === 12) {
+                            console.log("COMPLETE")
+                        }
+
+                        oldLength = newLength;
+                        [...document.getElementsByClassName("moveable")].forEach(testDistance);
+                        [...document.getElementsByClassName("fixed")].forEach(testDistance);
+                        spinning = [...document.getElementsByClassName("spin")];
+                        newLength = spinning.length;
+                    }
+
+                    function testDistance(elem){
+                        const eBox = elem.getBoundingClientRect();
+                        let isSpinning = null;
+                        spinning.forEach(spinner => {
+                            if (spinner === elem) return;
+                            const maxDistance = (elem.clientWidth + spinner.clientWidth)/2 + 5;
+                            const sBox = spinner.getBoundingClientRect();
+                            const distance = Math.sqrt(((eBox.left - sBox.left + eBox.right - sBox.right) ** 2 + ((eBox.top - sBox.top + eBox.bottom - sBox.bottom) ** 2)))/2
+                            if (distance < maxDistance) 
+                                isSpinning = spinner.classList.contains("anti") ? "forwards" : "back";                            
+                        })
+                        if (isSpinning === "back") elem.classList.add("anti");
+                        if (isSpinning) elem.classList.add("spin");
+                        else if (!(elem.id === "first")) elem.classList.remove("spin");
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

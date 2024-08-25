@@ -1,0 +1,54 @@
+.moveable, .fixed {
+    position: absolute;
+}
+
+.bg {
+    position: absolute;
+    top:0;
+    left: 0;
+}
+
+#Big_Red {
+    top: 10px;
+    left: 950px;
+}
+
+#Medium_Red {
+    top: 275px;
+    left: 950px;
+}
+
+#Small_Red_1 {
+    top: 400px;
+    left: 950px;
+}
+
+#Small_Red_2 {
+    top: 500px;
+    left: 950px;
+}
+
+#Small_Red_3 {
+    top: 600px;
+    left: 950px;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+
+.spin {
+    animation-name: spin;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.anti {
+    animation-direction: reverse;
+}

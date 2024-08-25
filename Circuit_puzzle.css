@@ -1,0 +1,48 @@
+#outer {
+    display: grid;
+    grid-template: repeat(5, auto) / repeat(5, auto);
+    width: 750px;
+    height: 750px;
+}
+
+#outer div {
+    width: 150px;
+    height: 150px;
+    transform: rotate(0deg);
+}
+
+.bulb {
+    background-image: url("Peg_Pipe.png");
+    background-size: contain;
+}
+
+.straight {
+    background-image: url("Straight_Pipe.png");
+    background-size: contain;
+}
+
+.junction {
+    background-image: url("Junction_Pipe.png");
+    background-size: contain;
+}
+
+.corner {
+    background-image: url("Corner_Pipe.png");
+    background-size: contain;
+}
+
+.bulb.lightning {
+    background-image: url("Lightning.png"), url("Peg_Pipe.png");
+}
+
+.straight.lightning {
+    background-image: url("Lightning.png"), url("Straight_Pipe.png");
+}
+
+.junction.lightning {
+    background-image: url("Lightning.png"), url("Junction_Pipe.png");
+}
+
+.corner.lightning {
+    background-image: url("Lightning.png"), url("Corner_Pipe.png");
+}

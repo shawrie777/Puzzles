@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="Circuit_puzzle.css"/>
+    </head>
+    <body>
+        <div id="outer">
+            <div class="bulb" style="transform: rotate(180deg);"></div>
+            <div class="straight" style="transform: rotate(180deg);"></div>
+            <div class="junction" style="transform: rotate(270deg);"></div>
+            <div class="straight" style="transform: rotate(0deg);"></div>
+            <div class="corner" style="transform: rotate(270deg);"></div>
+
+            <div class="bulb" style="transform: rotate(90deg);"></div>
+            <div class="straight" style="transform: rotate(90deg);"></div>
+            <div class="junction" style="transform: rotate(90deg);"></div>
+            <div class="corner" style="transform: rotate(90deg);"></div>
+            <div class="bulb" style="transform: rotate(90deg);"></div>
+
+            <div class="bulb" style="transform: rotate(270deg);"></div>
+            <div class="bulb" style="transform: rotate(90deg);"></div>
+            <div class="junction" style="transform: rotate(180deg);"></div>
+            <div class="corner" style="transform: rotate(180deg);"></div>
+            <div class="bulb" style="transform: rotate(270deg);"></div>
+
+            <div class="corner" style="transform: rotate(90deg);"></div>
+            <div class="corner" style="transform: rotate(0deg);"></div>
+            <div class="junction" style="transform: rotate(90deg);"></div>
+            <div class="straight" style="transform: rotate(180deg);"></div>
+            <div class="corner" style="transform: rotate(270deg);"></div>
+
+            <div class="bulb" style="transform: rotate(90deg);"></div>
+            <div class="junction" style="transform: rotate(0deg);"></div>
+            <div class="junction" style="transform: rotate(0deg);"></div>
+            <div class="straight" style="transform: rotate(90deg);"></div>
+            <div class="bulb" style="transform: rotate(270deg);"></div>
+        </div>
+
+        <script>
+            let timeout = null;
+            const pieces = [...document.getElementById("outer").children];
+            pieces.forEach(child => {
+                child.addEventListener("click", rotate)
+            });
+
+            checkSolve();
+
+            function rotate(ev) {
+                let rot = parseInt(this.style.transform.substring(7,10)) || 0;
+                rot = (rot + 90) % 360;
+                
+                this.style.transform = `rotate(${rot}deg)`;
+
+                if (timeout !== null) clearTimeout(timeout);
+                setTimeout(checkSolve, 200);
+            }
+
+            function checkSolve() {
+                pieces.forEach(piece => piece.classList.remove("lightning"));
+                pieces[12].classList.add("lightning");
+                spreadLightning(12 , -1);
+
+                if ([...document.getElementsByClassName("lightning")].length === 25)
+                alert("COMPLETE")
+            }
+
+            function spreadLightning(idx, source){
+                const rot = (parseInt(pieces[idx].style.transform?.substring(7,10)) || 0) / 90;
+                const myNeighbours = connections(idx);
+
+                if ((idx - 5 !== source) && (myNeighbours & 0b1000) && (connections(idx-5) & 0b0010)) {
+                    pieces[idx-5].classList.add("lightning");
+                    spreadLightning(idx-5, idx);
+                }
+                if ((idx + 1 !== source) && (myNeighbours & 0b0100) && (connections(idx+1) & 0b0001)) {
+                    pieces[idx+1].classList.add("lightning");
+                    spreadLightning(idx+1, idx);
+                }
+                if ((idx + 5 !== source) && (myNeighbours & 0b0010) && (connections(idx+5) & 0b1000)) {
+                    pieces[idx+5].classList.add("lightning");
+                    spreadLightning(idx+5, idx);
+                }
+                if ((idx - 1 !== source) && (myNeighbours & 0b0001) && (connections(idx-1) & 0b0100)) {
+                    pieces[idx-1].classList.add("lightning");
+                    spreadLightning(idx-1, idx);
+                }
+            }
+
+            function connections(idx){
+                let hasNeighbours = 0b0000;
+                if (idx > 4) hasNeighbours |= 0b1000;
+                if (idx % 5 !== 4) hasNeighbours |= 0b0100;
+                if (idx < 20) hasNeighbours |= 0b0010;
+                if (idx % 5 !== 0) hasNeighbours |= 0b0001;
+
+                const rot = (parseInt(pieces[idx].style.transform?.substring(7,10)) || 0) / 90;
+
+                const classes = pieces[idx].classList;
+                if (classes.contains("bulb"))
+                    switch (rot) {
+                        case 0:
+                            hasNeighbours &= 0b0100;
+                            break;
+                        case 1:
+                            hasNeighbours &= 0b0010;
+                            break;
+                        case 2:
+                            hasNeighbours &= 0b0001;
+                            break;
+                        case 3:
+                            hasNeighbours &= 0b1000;
+                            break;
+                        default:
+                            break;
+                    }
+                
+                else if (classes.contains("straight"))
+                    if (rot === 0 || rot === 2)
+                        hasNeighbours &= 0b1010;
+                    else
+                        hasNeighbours &= 0b0101;
+                
+                else if (classes.contains("corner")) {
+                    switch (rot) {
+                        case 0:
+                            hasNeighbours &= 0b0110;
+                            break;
+                        case 1:
+                            hasNeighbours &= 0b0011;
+                            break;
+                        case 2:
+                            hasNeighbours &= 0b1001;
+                            break;
+                        case 3:
+                            hasNeighbours &= 0b1100;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                
+                else {
+                    switch (rot) {
+                        case 0:
+                            hasNeighbours &= 0b1110;
+                            break;
+                        case 1:
+                            hasNeighbours &= 0b0111;
+                            break;
+                        case 2:
+                            hasNeighbours &= 0b1011;
+                            break;
+                        case 3:
+                            hasNeighbours &= 0b1101;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                return hasNeighbours;
+            }
+        </script>
+    </body>
+</html>

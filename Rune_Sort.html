@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="Rune_Sort.css"/>
+    </head>
+    <body>
+        <img class="moveable" src="Air.jpeg"/>
+        <img class="moveable" src="Earth.jpeg" />
+        <img class="moveable" src="Fire.jpeg" />
+        <img class="moveable" src="Water.jpeg" />
+
+        <div id="grid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <script>
+            const targets = [...document.getElementById("grid").children].map(elem => {
+                const rect = elem.getBoundingClientRect();
+                return {x: (rect.left + rect.right)/2, y: (rect.top + rect.bottom)/2};
+            })
+
+
+            Array.from(
+                document.getElementsByClassName("moveable"))
+                    .forEach(dragElement)
+
+            function dragElement(elem) {
+                let pos1 = 0;
+                let pos2 = 0;
+                let pos3 = 0;
+                let pos4 = 0;
+
+                elem.onmousedown = dragMouseDown;
+
+                function dragMouseDown(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    document.onmouseup = closeDragElement;
+                    document.onmousemove = elementDrag;
+                }
+
+                function elementDrag(e) {
+                    e = e || window.event;
+                    e.preventDefault();
+                    pos1 = pos3 - e.clientX;
+                    pos2 = pos4 - e.clientY;
+                    pos3 = e.clientX;
+                    pos4 = e.clientY;
+                    elem.style.top = (elem.offsetTop - pos2) + "px";
+                    elem.style.left = (elem.offsetLeft - pos1) + "px";
+                }
+
+                function closeDragElement(e) {
+                    const elem = e.target;
+                    document.onmouseup = null;
+                    document.onmousemove = null;
+
+                    targets.forEach(target => {
+                        const dist = Math.sqrt((e.clientX - target.x) ** 2 + (e.clientY - target.y) ** 2);
+                        if (dist < 125) {
+                            elem.style.top = (target.y - 75) + "px";
+                            elem.style.left = (target.x - 75) + "px";
+                        }
+                    })
+                }
+            }
+        </script>
+    </body>
+</html>
